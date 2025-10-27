@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:expensive_tracker/models/transaction_model.dart';
-import 'package:expensive_tracker/models/income_model.dart';
-import 'package:expensive_tracker/models/category_summary.dart';
+import 'package:expense_tracker/models/transaction_model.dart';
+import 'package:expense_tracker/models/income_model.dart';
+import 'package:expense_tracker/models/category_summary.dart';
 
 class AppConstants {
   // Transaction Model
