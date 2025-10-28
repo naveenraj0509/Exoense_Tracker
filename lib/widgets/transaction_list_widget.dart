@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import '../models/transaction_model.dart';
 import '../core/constants/app_constants.dart';
 
 class TransactionListWidget extends StatelessWidget {
-  final List<TransactionModel> transactions;
+  final List<dynamic> transactions;
   final bool showDivider;
+  final Function(dynamic)? onEdit;
+  final Function(dynamic)? onDelete;
 
   const TransactionListWidget({
     super.key,
     required this.transactions,
     this.showDivider = true,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -20,16 +23,26 @@ class TransactionListWidget extends StatelessWidget {
       itemCount: transactions.length,
       itemBuilder: (context, index) {
         final transaction = transactions[index];
-        return _TransactionTile(transaction: transaction);
+        return _TransactionTile(
+          transaction: transaction,
+          onEdit: onEdit != null ? () => onEdit!(transaction) : null,
+          onDelete: onDelete != null ? () => onDelete!(transaction) : null,
+        );
       },
     );
   }
 }
 
 class _TransactionTile extends StatelessWidget {
-  final TransactionModel transaction;
+  final dynamic transaction;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
-  const _TransactionTile({required this.transaction});
+  const _TransactionTile({
+    required this.transaction,
+    this.onEdit,
+    this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +111,40 @@ class _TransactionTile extends StatelessWidget {
               ),
             ],
           ),
+          if (onEdit != null || onDelete != null)
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'edit' && onEdit != null) {
+                  onEdit!();
+                } else if (value == 'delete' && onDelete != null) {
+                  onDelete!();
+                }
+              },
+              itemBuilder: (BuildContext context) => [
+                if (onEdit != null)
+                  const PopupMenuItem<String>(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit, color: Colors.blue),
+                        SizedBox(width: 8),
+                        Text('Edit'),
+                      ],
+                    ),
+                  ),
+                if (onDelete != null)
+                  const PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete, color: Colors.red),
+                        SizedBox(width: 8),
+                        Text('Delete'),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
         ],
       ),
     );

@@ -1,30 +1,17 @@
 import 'package:flutter/material.dart';
-import '../utils/screenSize.dart';
+import 'package:provider/provider.dart';
+import '../utils/screen_size.dart';
+import '../widgets/balance_card.dart';
 import '../widgets/expenses_summary_card.dart';
 import '../widgets/filter_buttons_widget.dart';
-import '../widgets/income_expenses_summary_widget.dart';
 import '../widgets/recent_transactions_section_widget.dart';
 import '../widgets/add_transaction_dialog.dart';
-import '../core/constants/app_constants.dart';
-import '../models/transaction_model.dart';
+import '../view_models/transaction_provider.dart';
 
-class HomeView extends StatefulWidget {
+class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
-  @override
-  State<HomeView> createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
-  late List<TransactionModel> filteredTransactions;
-
-  @override
-  void initState() {
-    super.initState();
-    filteredTransactions = AppConstants.staticTransactions.take(5).toList();
-  }
-
-  void _showAddTransactionDialog() {
+  void _showAddTransactionDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -35,6 +22,9 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<TransactionProvider>();
+    final filteredTransactions = provider.transactions.take(5).toList();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFE57373),
@@ -88,40 +78,18 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: screenHeight(context, dividedBy: 30)),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Expenses',
-                      style: TextStyle(
-                        fontSize: screenWidth(context, dividedBy: 18),
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '1 Feb 2023 - 28 Feb 2023',
-                      style: TextStyle(
-                        fontSize: screenWidth(context, dividedBy: 28),
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: screenHeight(context, dividedBy: 25)),
+                // Space between app bar and balance card
+                SizedBox(height: screenHeight(context, dividedBy: 50)),
+                // Balance Card (now with same margins as other cards)
+                const BalanceCard(),
+                SizedBox(height: screenHeight(context, dividedBy: 35)),
                 const ExpensesSummaryCard(),
                 SizedBox(height: screenHeight(context, dividedBy: 25)),
                 FilterButtonsWidget(
                   onFilterChanged: (filter) {
-                    setState(() {
-                      // Filter logic can be added here
-                    });
+                    // Filter logic can be added here
                   },
                 ),
-                SizedBox(height: screenHeight(context, dividedBy: 25)),
-                const IncomeExpensesSummaryWidget(),
                 SizedBox(height: screenHeight(context, dividedBy: 25)),
                 RecentTransactionsSectionWidget(
                   transactions: filteredTransactions,
@@ -133,7 +101,7 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddTransactionDialog,
+        onPressed: () => _showAddTransactionDialog(context),
         backgroundColor: const Color(0xFFE57373),
         shape: const CircleBorder(),
         child: const Icon(Icons.add, color: Colors.white, size: 28),

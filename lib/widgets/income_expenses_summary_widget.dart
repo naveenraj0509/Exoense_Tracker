@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_constants.dart';
-import '../utils/screenSize.dart';
+import '../utils/screen_size.dart';
 
 class IncomeExpensesSummaryWidget extends StatelessWidget {
-  const IncomeExpensesSummaryWidget({super.key});
+  final int totalIncome;
+  final int totalExpenses;
+
+  const IncomeExpensesSummaryWidget({
+    super.key,
+    required this.totalIncome,
+    required this.totalExpenses,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final totalIncome = AppConstants.staticIncome.fold<int>(
-      0,
-      (sum, income) => sum + income.amount,
-    );
-    final totalExpenses = AppConstants.staticTransactions.fold<int>(
-      0,
-      (sum, transaction) => sum + transaction.amount,
-    );
-
     return Row(
       children: [
         Expanded(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/screenSize.dart';
+import '../utils/screen_size.dart';
 import '../views/all_transactions_view.dart';
 import 'transaction_list_widget.dart';
 import '../models/transaction_model.dart';
